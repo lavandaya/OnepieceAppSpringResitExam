@@ -1,4 +1,4 @@
-package be.kdg.programming3.onepiece.domain;
+package be.kdg.programming3.onepiece.business.domain;
 
 import java.util.ArrayList;
 import java.util.List;

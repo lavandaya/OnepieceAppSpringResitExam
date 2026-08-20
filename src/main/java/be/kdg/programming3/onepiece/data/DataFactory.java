@@ -1,20 +1,24 @@
 package be.kdg.programming3.onepiece.data;
 
-import be.kdg.programming3.onepiece.domain.Battle;
-import be.kdg.programming3.onepiece.domain.Character;
-import be.kdg.programming3.onepiece.domain.Crew;
-import be.kdg.programming3.onepiece.domain.Powertype;
+import be.kdg.programming3.onepiece.business.domain.Battle;
+import be.kdg.programming3.onepiece.business.domain.Character;
+import be.kdg.programming3.onepiece.business.domain.Crew;
+import be.kdg.programming3.onepiece.business.domain.Powertype;
+import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class DataFactory {
-    public static List<Character> characters = new ArrayList<>();
-    public static List<Battle> battles = new ArrayList<>();
-    public static List<Crew> crews = new ArrayList<>();
+    private final List<Character> characters = new ArrayList<>();
+    private final List<Battle> battles = new ArrayList<>();
+    private final List<Crew> crews = new ArrayList<>();
 
-    public static void seed() {
+    @PostConstruct
+    public void seed() {
         Character c1 = new Character(1, "Luffy", 18, "https://placehold.co/400x400/d62828/ffffff?text=Luffy", Powertype.DEVIL_FRUIT, 10);
         Character c2 = new Character(2, "Zoro", 20, "https://placehold.co/400x400/2a6f4e/ffffff?text=Zoro", Powertype.WILL, 9);
         Character c3 = new Character(3, "Sanji", 20, "https://placehold.co/400x400/e8a23d/000000?text=Sanji", Powertype.NO_POWER, 8);
@@ -53,4 +57,8 @@ public class DataFactory {
 
         crews.add(crew1); crews.add(crew2);
     }
+
+    public List<Character> getAllCharacters() { return new ArrayList<>(characters); }
+    public List<Battle> getAllBattles() { return new ArrayList<>(battles); }
+    public List<Crew> getAllCrews() { return new ArrayList<>(crews); }
 }
