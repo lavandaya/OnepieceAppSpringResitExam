@@ -1,17 +1,49 @@
 package be.kdg.programming3.onepiece.business.domain;
 
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+@Entity
+@Table(name = "characters")
 public class Character {
-    private final int id;
-    private final String name;
-    private final int age;
-    private final String appearance;
-    private final Powertype powertype;
-    private final double power;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "character_id")
+    private int id;
+
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @Column(nullable = false)
+    private int age;
+
+    @Column(nullable = false, length = 255)
+    private String appearance;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Powertype powertype;
+
+    @Column(nullable = false)
+    private double power;
+
+    @ManyToOne
+    @JoinColumn(name = "crew_name")
     private Crew crew;
-    private final List<Battle> battles = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "character_battles",
+            joinColumns = @JoinColumn(name = "character_id"),
+            inverseJoinColumns = @JoinColumn(name = "battle_id")
+    )
+    private List<Battle> battles = new ArrayList<>();
+
+    protected Character() {
+    }
 
     public Character(int id, String name, int age, String appearance, Powertype powertype, double power) {
         this.id = id;
@@ -48,5 +80,18 @@ public class Character {
     @Override
     public String toString() {
         return "Character #" + id + ", " + name + ", powertype - " + powertype + ", power - " + power + " DON";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Character character = (Character) o;
+        return id == character.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

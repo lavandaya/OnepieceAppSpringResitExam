@@ -1,13 +1,28 @@
 package be.kdg.programming3.onepiece.business.domain;
 
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "crews")
 public class Crew {
-    private final String name;
-    private final boolean hasBounty;
-    private final String shipName;
-    private final List<Character> members = new ArrayList<>();
+    @Id
+    @Column(name = "name", length = 100)
+    private String name;
+
+    @Column(name = "has_bounty", nullable = false)
+    private boolean hasBounty;
+
+    @Column(name = "ship_name", nullable = false, length = 100)
+    private String shipName;
+
+    @OneToMany(mappedBy = "crew")
+    private List<Character> members = new ArrayList<>();
+
+    protected Crew() {
+    }
 
     public Crew(String name, boolean hasBounty, String shipName) {
         this.name = name;

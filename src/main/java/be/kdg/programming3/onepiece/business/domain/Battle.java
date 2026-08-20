@@ -1,16 +1,36 @@
 package be.kdg.programming3.onepiece.business.domain;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "battles")
 public class Battle {
-    private final int id;
-    private final String name;
-    private final String location;
-    private final LocalDateTime date;
-    private final String winner;
-    private final List<Character> characters = new ArrayList<>();
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "battle_id")
+    private int id;
+
+    @Column(nullable = false, length = 120)
+    private String name;
+
+    @Column(nullable = false, length = 120)
+    private String location;
+
+    @Column(name = "fought_at", nullable = false)
+    private LocalDateTime date;
+
+    @Column(nullable = false, length = 100)
+    private String winner;
+
+    @ManyToMany(mappedBy = "battles")
+    private List<Character> characters = new ArrayList<>();
+
+    protected Battle() {
+    }
 
     public Battle(int id, String name, String location, LocalDateTime date, String winner) {
         this.id = id;
