@@ -8,4 +8,5 @@ import java.util.List;
 public interface CharacterRepository {
     List<Character> findAll();
     List<Character> findByPowertype(Powertype powertype);
+    void save(Character character);
 }

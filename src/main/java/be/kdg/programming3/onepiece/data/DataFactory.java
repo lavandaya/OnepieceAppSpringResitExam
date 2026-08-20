@@ -6,6 +6,9 @@ import be.kdg.programming3.onepiece.business.domain.Crew;
 import be.kdg.programming3.onepiece.business.domain.Powertype;
 import org.springframework.stereotype.Component;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,12 +16,15 @@ import java.util.List;
 
 @Component
 public class DataFactory {
+    private static final Logger logger = LoggerFactory.getLogger(DataFactory.class);
+
     private final List<Character> characters = new ArrayList<>();
     private final List<Battle> battles = new ArrayList<>();
     private final List<Crew> crews = new ArrayList<>();
 
     @PostConstruct
     public void seed() {
+        logger.debug("Seeding initial data");
         Character c1 = new Character(1, "Luffy", 18, "https://placehold.co/400x400/d62828/ffffff?text=Luffy", Powertype.DEVIL_FRUIT, 10);
         Character c2 = new Character(2, "Zoro", 20, "https://placehold.co/400x400/2a6f4e/ffffff?text=Zoro", Powertype.WILL, 9);
         Character c3 = new Character(3, "Sanji", 20, "https://placehold.co/400x400/e8a23d/000000?text=Sanji", Powertype.NO_POWER, 8);
@@ -56,9 +62,15 @@ public class DataFactory {
         crew2.addCharacter(c6);
 
         crews.add(crew1); crews.add(crew2);
+
+        logger.debug("Seeded {} characters, {} battles, {} crews",
+                characters.size(), battles.size(), crews.size());
     }
 
     public List<Character> getAllCharacters() { return new ArrayList<>(characters); }
     public List<Battle> getAllBattles() { return new ArrayList<>(battles); }
     public List<Crew> getAllCrews() { return new ArrayList<>(crews); }
+
+    public void addCharacter(Character character) { characters.add(character); }
+    public void addBattle(Battle battle) { battles.add(battle); }
 }

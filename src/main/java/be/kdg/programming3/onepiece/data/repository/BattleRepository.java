@@ -8,4 +8,6 @@ import java.util.List;
 public interface BattleRepository {
     List<Battle> findAll();
     List<Battle> findByLocationAndDate(String location, LocalDate date);
+    void save(Battle battle);
+    void addCharacterToBattle(int battleId, int characterId);
 }

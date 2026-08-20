@@ -8,4 +8,5 @@ import java.util.List;
 public interface CharacterService {
     List<Character> getAllCharacters();
     List<Character> getCharactersByPowertype(Powertype powertype);
+    void addCharacter(String name, int age, String appearance, Powertype powertype, double power);
 }

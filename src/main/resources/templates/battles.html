@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Battles</title>
+</head>
+<body>
+<nav>
+    <a href="/characters">Character List</a> |
+    <a href="/battles">Battle List</a> |
+    <a href="/characters/add">Add Character</a> |
+    <a href="/battles/add">Add Battle</a>
+</nav>
+
+<h1>Battles</h1>
+
+<form th:action="@{/battles}" method="get">
+    <label for="location">Location contains:</label>
+    <input type="text" id="location" name="location" th:value="${location}">
+
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date" th:value="${date}">
+
+    <button type="submit">Filter</button>
+    <a href="/battles">Reset</a>
+</form>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Location</th>
+        <th>Date</th>
+        <th>Winner</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="battle : ${battles}">
+        <td th:text="${battle.id}"></td>
+        <td th:text="${battle.name}"></td>
+        <td th:text="${battle.location}"></td>
+        <td th:text="${#temporals.format(battle.date, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${battle.winner}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

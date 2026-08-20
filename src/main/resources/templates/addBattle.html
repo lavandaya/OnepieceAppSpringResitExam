@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Battle</title>
+</head>
+<body>
+<nav>
+    <a href="/characters">Character List</a> |
+    <a href="/battles">Battle List</a> |
+    <a href="/characters/add">Add Character</a> |
+    <a href="/battles/add">Add Battle</a>
+</nav>
+
+<h1>Add Battle</h1>
+
+<form th:action="@{/battles/add}" method="post">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required><br>
+
+    <label for="location">Location:</label>
+    <input type="text" id="location" name="location" required><br>
+
+    <label for="date">Date and time:</label>
+    <input type="datetime-local" id="date" name="date" required><br>
+
+    <label for="winner">Winner:</label>
+    <input type="text" id="winner" name="winner" required><br>
+
+    <p>Characters:</p>
+    <div th:each="character : ${allCharacters}">
+        <input type="checkbox" th:id="${'char-' + character.id}" name="characterIds" th:value="${character.id}">
+        <label th:for="${'char-' + character.id}" th:text="${character.name}"></label>
+    </div>
+
+    <button type="submit">Add</button>
+</form>
+</body>
+</html>

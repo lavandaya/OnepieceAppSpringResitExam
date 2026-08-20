@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Characters</title>
+</head>
+<body>
+<nav>
+    <a href="/characters">Character List</a> |
+    <a href="/battles">Battle List</a> |
+    <a href="/characters/add">Add Character</a> |
+    <a href="/battles/add">Add Battle</a>
+</nav>
+
+<h1>Characters</h1>
+
+<form th:action="@{/characters}" method="get">
+    <label for="powertype">Powertype:</label>
+    <select id="powertype" name="powertype">
+        <option th:each="pt : ${powertypes}" th:value="${pt}" th:text="${pt}"
+                th:selected="${pt == selectedPowertype}"></option>
+    </select>
+    <button type="submit">Filter</button>
+</form>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Appearance</th>
+        <th>Powertype</th>
+        <th>Power</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="character : ${characters}">
+        <td th:text="${character.id}"></td>
+        <td th:text="${character.name}"></td>
+        <td th:text="${character.age}"></td>
+        <td th:text="${character.appearance}"></td>
+        <td th:text="${character.powertype}"></td>
+        <td th:text="${character.power}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

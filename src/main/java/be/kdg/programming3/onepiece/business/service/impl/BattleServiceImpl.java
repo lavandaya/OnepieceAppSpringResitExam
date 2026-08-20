@@ -3,13 +3,18 @@ package be.kdg.programming3.onepiece.business.service.impl;
 import be.kdg.programming3.onepiece.business.domain.Battle;
 import be.kdg.programming3.onepiece.business.service.BattleService;
 import be.kdg.programming3.onepiece.data.repository.BattleRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class BattleServiceImpl implements BattleService {
+    private static final Logger logger = LoggerFactory.getLogger(BattleServiceImpl.class);
+
     private final BattleRepository repository;
 
     public BattleServiceImpl(BattleRepository repository) {
@@ -24,5 +29,18 @@ public class BattleServiceImpl implements BattleService {
     @Override
     public List<Battle> findBattles(String location, LocalDate date) {
         return repository.findByLocationAndDate(location, date);
+    }
+
+    @Override
+    public void addBattle(String name, String location, LocalDateTime date, String winner, List<Integer> characterIds) {
+        Battle battle = new Battle(name, location, date, winner);
+        repository.save(battle);
+
+        if (characterIds != null) {
+            characterIds.forEach(charId -> repository.addCharacterToBattle(battle.getId(), charId));
+        }
+
+        logger.debug("Added battle {} with {} character(s)", battle,
+                characterIds == null ? 0 : characterIds.size());
     }
 }

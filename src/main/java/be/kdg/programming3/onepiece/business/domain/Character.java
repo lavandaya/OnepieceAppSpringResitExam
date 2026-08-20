@@ -22,6 +22,10 @@ public class Character {
         this.power = power;
     }
 
+    public Character(String name, int age, String appearance, Powertype powertype, double power) {
+        this(0, name, age, appearance, powertype, power);
+    }
+
     public int getId() { return id; }
     public String getName() { return name; }
     public int getAge() { return age; }

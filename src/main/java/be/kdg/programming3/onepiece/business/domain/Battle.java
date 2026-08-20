@@ -20,6 +20,10 @@ public class Battle {
         this.winner = winner;
     }
 
+    public Battle(String name, String location, LocalDateTime date, String winner) {
+        this(0, name, location, date, winner);
+    }
+
     public int getId() { return id; }
     public String getName() { return name; }
     public String getLocation() { return location; }

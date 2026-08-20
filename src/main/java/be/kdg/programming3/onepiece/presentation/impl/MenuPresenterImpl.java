@@ -6,6 +6,9 @@ import be.kdg.programming3.onepiece.business.service.CharacterService;
 import be.kdg.programming3.onepiece.presentation.presenter.MenuPresenter;
 import org.springframework.stereotype.Component;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
@@ -14,6 +17,8 @@ import java.util.stream.IntStream;
 
 @Component
 public class MenuPresenterImpl implements MenuPresenter {
+    private static final Logger logger = LoggerFactory.getLogger(MenuPresenterImpl.class);
+
     private final CharacterService characterService;
     private final BattleService battleService;
     private final Scanner scanner;
@@ -26,6 +31,7 @@ public class MenuPresenterImpl implements MenuPresenter {
 
     @Override
     public void onShowAllCharacters() {
+        logger.debug("Showing all characters");
         System.out.println("\nAll characters");
         System.out.println("===============");
         characterService.getAllCharacters().forEach(System.out::println);
@@ -34,6 +40,7 @@ public class MenuPresenterImpl implements MenuPresenter {
     @Override
     public void onShowCharactersByPowertype() {
         Powertype selected = readPowertype();
+        logger.debug("Showing characters filtered by powertype={}", selected);
         characterService.getCharactersByPowertype(selected).forEach(System.out::println);
     }
 
@@ -58,6 +65,7 @@ public class MenuPresenterImpl implements MenuPresenter {
 
     @Override
     public void onShowAllBattles() {
+        logger.debug("Showing all battles");
         System.out.println("\nAll battles");
         System.out.println("===========");
         battleService.getAllBattles().forEach(System.out::println);
@@ -71,11 +79,13 @@ public class MenuPresenterImpl implements MenuPresenter {
         String dateInput = scanner.nextLine().trim();
         LocalDate date = dateInput.isBlank() ? null : LocalDate.parse(dateInput, DateTimeFormatter.ISO_LOCAL_DATE);
 
+        logger.debug("Showing battles filtered by location='{}', date={}", location, date);
         battleService.findBattles(location, date).forEach(System.out::println);
     }
 
     @Override
     public void exit() {
+        logger.debug("Exiting application");
         System.out.println("Bye!");
         System.exit(0);
     }

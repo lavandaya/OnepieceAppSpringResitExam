@@ -3,10 +3,15 @@ package be.kdg.programming3.onepiece.presentation.view;
 import be.kdg.programming3.onepiece.presentation.presenter.MenuPresenter;
 import org.springframework.stereotype.Component;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Scanner;
 
 @Component
 public class ConsoleMenuView implements MenuView {
+    private static final Logger logger = LoggerFactory.getLogger(ConsoleMenuView.class);
+
     private final MenuPresenter presenter;
     private final Scanner scanner;
 
@@ -17,6 +22,7 @@ public class ConsoleMenuView implements MenuView {
 
     @Override
     public void show() {
+        logger.debug("Console menu started");
         int choice;
         do {
             printMenu();
