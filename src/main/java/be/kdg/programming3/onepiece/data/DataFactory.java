@@ -4,6 +4,7 @@ import be.kdg.programming3.onepiece.business.domain.Battle;
 import be.kdg.programming3.onepiece.business.domain.Character;
 import be.kdg.programming3.onepiece.business.domain.Crew;
 import be.kdg.programming3.onepiece.business.domain.Powertype;
+import be.kdg.programming3.onepiece.business.domain.Swordsman;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +31,7 @@ public class DataFactory {
     public void seed() {
         logger.debug("Seeding initial data");
         Character c1 = new Character(1, "Luffy", 18, "https://placehold.co/400x400/d62828/ffffff?text=Luffy", Powertype.DEVIL_FRUIT, 10);
-        Character c2 = new Character(2, "Zoro", 20, "https://placehold.co/400x400/2a6f4e/ffffff?text=Zoro", Powertype.WILL, 9);
+        Character c2 = new Swordsman(2, "Zoro", 20, "https://placehold.co/400x400/2a6f4e/ffffff?text=Zoro", Powertype.WILL, 9, "Wado Ichimonji");
         Character c3 = new Character(3, "Sanji", 20, "https://placehold.co/400x400/e8a23d/000000?text=Sanji", Powertype.NO_POWER, 8);
         Character c4 = new Character(4, "Ussop", 19, "https://placehold.co/400x400/8a5a44/ffffff?text=Ussop", Powertype.NO_POWER, 1);
         Character c5 = new Character(5, "Nami", 19, "https://placehold.co/400x400/e07a9b/000000?text=Nami", Powertype.NO_POWER, 1);
@@ -104,6 +105,15 @@ public class DataFactory {
                     }
                     characters.remove(target);
                 });
+    }
+
+    public void updateSwordName(int id, String swordName) {
+        characters.stream()
+                .filter(c -> c.getId() == id)
+                .filter(Swordsman.class::isInstance)
+                .map(Swordsman.class::cast)
+                .findFirst()
+                .ifPresent(s -> s.setSwordName(swordName));
     }
 
     public void removeBattle(int id) {

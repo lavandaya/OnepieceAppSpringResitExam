@@ -75,4 +75,28 @@ public class CharacterServiceImpl implements CharacterService {
         logger.debug("Deleting character id={}", id);
         repository.delete(id);
     }
+
+    @Override
+    public void updateSwordName(int id, String swordName) {
+        logger.debug("Updating sword name for character id={}", id);
+        repository.updateSwordName(id, swordName);
+    }
+
+    @Override
+    public List<Character> findByNameContaining(String name) {
+        logger.debug("Searching characters by name containing '{}'", name);
+        return repository.findByNameContaining(name);
+    }
+
+    @Override
+    public List<Character> findByMinPower(double minPower) {
+        logger.debug("Searching characters with power >= {}", minPower);
+        return repository.findByMinPower(minPower);
+    }
+
+    @Override
+    public List<Character> findByMinBattles(int minBattles) {
+        logger.debug("Searching characters with at least {} battles", minBattles);
+        return repository.findByMinBattles(minBattles);
+    }
 }

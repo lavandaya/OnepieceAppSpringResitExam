@@ -8,6 +8,9 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "characters")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "character_type", length = 20)
+@DiscriminatorValue("CHARACTER")
 public class Character {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

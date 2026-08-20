@@ -74,9 +74,19 @@ public class CharacterController {
                 .map(character -> {
                     model.addAttribute("character", character);
                     model.addAttribute("battles", battleService.getBattlesForCharacter(id));
+                    if (character instanceof be.kdg.programming3.onepiece.business.domain.Swordsman swordsman) {
+                        model.addAttribute("swordName", swordsman.getSwordName());
+                    }
                     return "characterDetail";
                 })
                 .orElse("redirect:/characters");
+    }
+
+    @PostMapping("/characters/{id}/sword")
+    public String updateSwordName(@PathVariable int id, @RequestParam String swordName) {
+        logger.debug("Updating sword name for character id={}", id);
+        characterService.updateSwordName(id, swordName);
+        return "redirect:/characters/" + id;
     }
 
     @PostMapping("/characters/{id}/delete")
@@ -84,5 +94,28 @@ public class CharacterController {
         logger.debug("Deleting character id={}", id);
         characterService.deleteCharacter(id);
         return "redirect:/characters";
+    }
+
+    @GetMapping("/characters/search")
+    public String searchCharacters(@RequestParam(required = false) String name,
+                                    @RequestParam(required = false) Double minPower,
+                                    @RequestParam(required = false) Integer minBattles,
+                                    Model model) {
+        logger.debug("Search page (name='{}', minPower={}, minBattles={})", name, minPower, minBattles);
+
+        List<Character> results = null;
+        if (name != null && !name.isBlank()) {
+            results = characterService.findByNameContaining(name.trim());
+        } else if (minPower != null) {
+            results = characterService.findByMinPower(minPower);
+        } else if (minBattles != null) {
+            results = characterService.findByMinBattles(minBattles);
+        }
+
+        model.addAttribute("results", results);
+        model.addAttribute("searchName", name);
+        model.addAttribute("searchMinPower", minPower);
+        model.addAttribute("searchMinBattles", minBattles);
+        return "characterSearch";
     }
 }

@@ -3,6 +3,7 @@ package be.kdg.programming3.onepiece.data.repository;
 import be.kdg.programming3.onepiece.business.domain.Character;
 import be.kdg.programming3.onepiece.business.domain.Crew;
 import be.kdg.programming3.onepiece.business.domain.Powertype;
+import be.kdg.programming3.onepiece.business.domain.Swordsman;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
@@ -85,5 +86,47 @@ public class JpaCharacterRepository implements CharacterRepository {
         if (character != null) {
             em.remove(character);
         }
+    }
+
+    @Override
+    public void updateSwordName(int id, String swordName) {
+        logger.debug("Updating sword name of character {} to '{}'", id, swordName);
+        Character character = em.find(Character.class, id);
+        if (character instanceof Swordsman swordsman) {
+            swordsman.setSwordName(swordName);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Character> findByNameContaining(String name) {
+        logger.debug("Finding characters by name containing '{}'", name);
+        return em.createQuery(
+                        "SELECT c FROM Character c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%')) ORDER BY c.id",
+                        Character.class)
+                .setParameter("name", name)
+                .getResultList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Character> findByMinPower(double minPower) {
+        logger.debug("Finding characters with power >= {}", minPower);
+        return em.createQuery(
+                        "SELECT c FROM Character c WHERE c.power >= :minPower ORDER BY c.id",
+                        Character.class)
+                .setParameter("minPower", minPower)
+                .getResultList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Character> findByMinBattles(int minBattles) {
+        logger.debug("Finding characters with at least {} battles", minBattles);
+        return em.createQuery(
+                        "SELECT DISTINCT c FROM Character c WHERE SIZE(c.battles) >= :minBattles ORDER BY c.id",
+                        Character.class)
+                .setParameter("minBattles", minBattles)
+                .getResultList();
     }
 }

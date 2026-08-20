@@ -3,6 +3,7 @@ package be.kdg.programming3.onepiece.data.repository;
 import be.kdg.programming3.onepiece.business.domain.Character;
 import be.kdg.programming3.onepiece.business.domain.Crew;
 import be.kdg.programming3.onepiece.business.domain.Powertype;
+import be.kdg.programming3.onepiece.business.domain.Swordsman;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -24,6 +25,7 @@ public class JdbcCharacterRepository implements CharacterRepository {
 
     private static final String SELECT_BASE = """
             SELECT c.character_id, c.name, c.age, c.appearance, c.powertype, c.power,
+                   c.character_type, c.sword_name,
                    cr.name AS crew_name, cr.has_bounty AS crew_has_bounty, cr.ship_name AS crew_ship_name
             FROM characters c
             LEFT JOIN crews cr ON cr.name = c.crew_name""";
@@ -80,12 +82,46 @@ public class JdbcCharacterRepository implements CharacterRepository {
     }
 
     @Override
+    public List<Character> findByNameContaining(String name) {
+        logger.debug("Finding characters by name containing '{}'", name);
+        return jdbcClient.sql(SELECT_BASE + " WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%')) ORDER BY c.character_id")
+                .param("name", name)
+                .query(this::mapCharacter)
+                .list();
+    }
+
+    @Override
+    public List<Character> findByMinPower(double minPower) {
+        logger.debug("Finding characters with power >= {}", minPower);
+        return jdbcClient.sql(SELECT_BASE + " WHERE c.power >= :minPower ORDER BY c.character_id")
+                .param("minPower", minPower)
+                .query(this::mapCharacter)
+                .list();
+    }
+
+    @Override
+    public List<Character> findByMinBattles(int minBattles) {
+        logger.debug("Finding characters with at least {} battles", minBattles);
+        return jdbcClient.sql(SELECT_BASE +
+                        " WHERE (SELECT COUNT(*) FROM character_battles cb WHERE cb.character_id = c.character_id) >= :minBattles" +
+                        " ORDER BY c.character_id")
+                .param("minBattles", minBattles)
+                .query(this::mapCharacter)
+                .list();
+    }
+
+    @Override
     public int save(Character character) {
         logger.debug("Saving character {}", character);
+        boolean isSwordsman = character instanceof Swordsman;
+        String type = isSwordsman ? "SWORDSMAN" : "CHARACTER";
+        String swordName = isSwordsman ? ((Swordsman) character).getSwordName() : null;
+
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcClient.sql("""
-                        INSERT INTO characters (name, age, appearance, powertype, power, crew_name)
-                        VALUES (:name, :age, :appearance, :powertype, :power, :crewName)
+                        INSERT INTO characters
+                            (name, age, appearance, powertype, power, crew_name, character_type, sword_name)
+                        VALUES (:name, :age, :appearance, :powertype, :power, :crewName, :type, :swordName)
                         """)
                 .param("name", character.getName())
                 .param("age", character.getAge())
@@ -93,6 +129,8 @@ public class JdbcCharacterRepository implements CharacterRepository {
                 .param("powertype", character.getPowertype().name())
                 .param("power", character.getPower())
                 .param("crewName", character.getCrew() != null ? character.getCrew().getName() : null)
+                .param("type", type)
+                .param("swordName", swordName)
                 .update(keyHolder);
         return keyHolder.getKey().intValue();
     }
@@ -105,14 +143,27 @@ public class JdbcCharacterRepository implements CharacterRepository {
                 .update();
     }
 
+    @Override
+    public void updateSwordName(int id, String swordName) {
+        logger.debug("Updating sword name of character {} to '{}'", id, swordName);
+        jdbcClient.sql("UPDATE characters SET sword_name = :swordName WHERE character_id = :id AND character_type = 'SWORDSMAN'")
+                .param("swordName", swordName)
+                .param("id", id)
+                .update();
+    }
+
     private Character mapCharacter(ResultSet rs, int rowNum) throws SQLException {
-        Character character = new Character(
-                rs.getInt("character_id"),
-                rs.getString("name"),
-                rs.getInt("age"),
-                rs.getString("appearance"),
-                Powertype.valueOf(rs.getString("powertype")),
-                rs.getDouble("power"));
+        int id = rs.getInt("character_id");
+        String name = rs.getString("name");
+        int age = rs.getInt("age");
+        String appearance = rs.getString("appearance");
+        Powertype powertype = Powertype.valueOf(rs.getString("powertype"));
+        double power = rs.getDouble("power");
+        String type = rs.getString("character_type");
+
+        Character character = "SWORDSMAN".equals(type)
+                ? new Swordsman(id, name, age, appearance, powertype, power, rs.getString("sword_name"))
+                : new Character(id, name, age, appearance, powertype, power);
 
         String crewName = rs.getString("crew_name");
         if (crewName != null) {

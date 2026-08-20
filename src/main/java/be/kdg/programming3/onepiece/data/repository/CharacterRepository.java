@@ -13,6 +13,12 @@ public interface CharacterRepository {
     List<Character> findByPowertype(Powertype powertype);
     List<Character> findByCrew(Crew crew);
     List<Character> findByBattleId(int battleId);
+
+    List<Character> findByNameContaining(String name);
+    List<Character> findByMinPower(double minPower);
+    List<Character> findByMinBattles(int minBattles);
+
     int save(Character character);
     void delete(int id);
+    void updateSwordName(int id, String swordName);
 }

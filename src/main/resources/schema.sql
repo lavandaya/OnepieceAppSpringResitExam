@@ -11,13 +11,15 @@ CREATE TABLE crews (
 );
 
 CREATE TABLE characters (
-    character_id INT AUTO_INCREMENT PRIMARY KEY,
-    name         VARCHAR(100) NOT NULL,
-    age          INT          NOT NULL,
-    appearance   VARCHAR(255) NOT NULL,
-    powertype    VARCHAR(20)  NOT NULL,
-    power        DOUBLE       NOT NULL,
-    crew_name    VARCHAR(100),
+    character_id   INT AUTO_INCREMENT PRIMARY KEY,
+    name           VARCHAR(100) NOT NULL,
+    age            INT          NOT NULL,
+    appearance     VARCHAR(255) NOT NULL,
+    powertype      VARCHAR(20)  NOT NULL,
+    power          DOUBLE       NOT NULL,
+    crew_name      VARCHAR(100),
+    character_type VARCHAR(20)  NOT NULL DEFAULT 'CHARACTER',
+    sword_name     VARCHAR(100),
     CONSTRAINT fk_character_crew FOREIGN KEY (crew_name) REFERENCES crews (name)
 );
 

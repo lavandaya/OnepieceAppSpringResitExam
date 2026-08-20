@@ -36,7 +36,13 @@
                      th:alt="${character.name}">
                 <div class="card-body">
                     <h5 class="card-title d-flex justify-content-between align-items-center">
-                        <span th:text="${character.name}">Name</span>
+    <span>
+        <span th:text="${character.name}">Name</span>
+        <span class="badge text-bg-warning ms-1"
+              th:if="${character instanceof T(be.kdg.programming3.onepiece.business.domain.Swordsman)}">
+            <i class="bi bi-shield"></i> Swordsman
+        </span>
+    </span>
                         <i class="bi bi-star-fill text-warning" th:if="${character.power >= 9.0}"></i>
                     </h5>
                     <p class="card-text">

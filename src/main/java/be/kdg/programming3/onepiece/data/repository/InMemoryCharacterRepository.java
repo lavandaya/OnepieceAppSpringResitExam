@@ -73,4 +73,35 @@ public class InMemoryCharacterRepository implements CharacterRepository {
         logger.debug("Deleting character id={}", id);
         factory.removeCharacter(id);
     }
+
+    @Override
+    public void updateSwordName(int id, String swordName) {
+        logger.debug("Updating sword name of character {} to '{}'", id, swordName);
+        factory.updateSwordName(id, swordName);
+    }
+
+    @Override
+    public List<Character> findByNameContaining(String name) {
+        logger.debug("Finding characters by name containing '{}'", name);
+        String needle = name.toLowerCase();
+        return factory.getAllCharacters().stream()
+                .filter(c -> c.getName().toLowerCase().contains(needle))
+                .toList();
+    }
+
+    @Override
+    public List<Character> findByMinPower(double minPower) {
+        logger.debug("Finding characters with power >= {}", minPower);
+        return factory.getAllCharacters().stream()
+                .filter(c -> c.getPower() >= minPower)
+                .toList();
+    }
+
+    @Override
+    public List<Character> findByMinBattles(int minBattles) {
+        logger.debug("Finding characters with at least {} battles", minBattles);
+        return factory.getAllCharacters().stream()
+                .filter(c -> c.getBattles().size() >= minBattles)
+                .toList();
+    }
 }
