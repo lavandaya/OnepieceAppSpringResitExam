@@ -92,4 +92,27 @@ public class DataFactory {
         battles.add(stored);
         return stored;
     }
+
+    public void removeCharacter(int id) {
+        characters.stream()
+                .filter(c -> c.getId() == id)
+                .findFirst()
+                .ifPresent(target -> {
+                    battles.forEach(b -> b.getCharacters().remove(target));
+                    if (target.getCrew() != null) {
+                        target.getCrew().getMembers().remove(target);
+                    }
+                    characters.remove(target);
+                });
+    }
+
+    public void removeBattle(int id) {
+        battles.stream()
+                .filter(b -> b.getId() == id)
+                .findFirst()
+                .ifPresent(target -> {
+                    characters.forEach(c -> c.getBattles().remove(target));
+                    battles.remove(target);
+                });
+    }
 }

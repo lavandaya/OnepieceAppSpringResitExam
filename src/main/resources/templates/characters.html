@@ -44,11 +44,17 @@
                         <span class="badge text-bg-info" th:text="${character.powertype}">TYPE</span>
                     </p>
                 </div>
-                <div class="card-footer bg-transparent border-top-0">
-                    <a class="btn btn-sm btn-outline-primary w-100"
+                <div class="card-footer bg-transparent border-top-0 d-flex gap-2">
+                    <a class="btn btn-sm btn-outline-primary flex-grow-1"
                        th:href="@{/characters/{id}(id=${character.id})}">
                         <i class="bi bi-eye"></i> <span th:text="#{characters.details}">View details</span>
                     </a>
+                    <form th:action="@{/characters/{id}/delete(id=${character.id})}" method="post" class="m-0">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                th:title="#{button.delete}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

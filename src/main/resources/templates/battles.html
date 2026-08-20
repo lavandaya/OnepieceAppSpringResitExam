@@ -34,16 +34,27 @@
                 <th th:text="#{battles.table.location}">Location</th>
                 <th th:text="#{battles.table.date}">Date</th>
                 <th th:text="#{battles.table.winner}">Winner</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="battle : ${battles}"
                 th:classappend="${battle.winner == 'Luffy'} ? 'table-warning' : ''">
                 <td th:text="${battle.id}"></td>
-                <td th:text="${battle.name}"></td>
+                <td>
+                    <a th:href="@{/battles/{id}(id=${battle.id})}" th:text="${battle.name}">name</a>
+                </td>
                 <td th:text="${battle.location}"></td>
                 <td th:text="${#temporals.format(battle.date, 'yyyy-MM-dd HH:mm')}"></td>
                 <td th:text="${battle.winner}"></td>
+                <td class="text-end">
+                    <form th:action="@{/battles/{id}/delete(id=${battle.id})}" method="post" class="m-0">
+                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                th:title="#{button.delete}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>

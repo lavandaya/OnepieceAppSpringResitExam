@@ -11,7 +11,10 @@ public interface CharacterService {
     List<Character> getAllCharacters();
     Optional<Character> getCharacterById(int id);
     List<Character> getCharactersByPowertype(Powertype powertype);
+    List<Character> getCharactersByCrew(Crew crew);
+    List<Character> getCharactersInBattle(int battleId);
     List<Crew> getAllCrews();
     Optional<Crew> getCrewByName(String name);
     void addCharacter(String name, int age, String appearance, Powertype powertype, double power, String crewName);
+    void deleteCharacter(int id);
 }

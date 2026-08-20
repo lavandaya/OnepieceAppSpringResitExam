@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -59,6 +60,25 @@ public class BattleController {
         }
         battleService.addBattle(viewModel.getName(), viewModel.getLocation(),
                 viewModel.getDate(), viewModel.getWinner(), viewModel.getCharacterIds());
+        return "redirect:/battles";
+    }
+
+    @GetMapping("/battles/{id}")
+    public String showBattleDetail(@PathVariable int id, Model model) {
+        logger.debug("Loading detail page for battle id={}", id);
+        return battleService.getBattleById(id)
+                .map(battle -> {
+                    model.addAttribute("battle", battle);
+                    model.addAttribute("characters", characterService.getCharactersInBattle(id));
+                    return "battleDetail";
+                })
+                .orElse("redirect:/battles");
+    }
+
+    @PostMapping("/battles/{id}/delete")
+    public String deleteBattle(@PathVariable int id) {
+        logger.debug("Deleting battle id={}", id);
+        battleService.deleteBattle(id);
         return "redirect:/battles";
     }
 }

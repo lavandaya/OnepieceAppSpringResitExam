@@ -1,6 +1,7 @@
 package be.kdg.programming3.onepiece.data.repository;
 
 import be.kdg.programming3.onepiece.business.domain.Character;
+import be.kdg.programming3.onepiece.business.domain.Crew;
 import be.kdg.programming3.onepiece.business.domain.Powertype;
 import be.kdg.programming3.onepiece.data.DataFactory;
 import org.slf4j.Logger;
@@ -44,8 +45,32 @@ public class InMemoryCharacterRepository implements CharacterRepository {
     }
 
     @Override
+    public List<Character> findByCrew(Crew crew) {
+        logger.debug("Finding characters by crew '{}'", crew.getName());
+        return factory.getAllCharacters().stream()
+                .filter(c -> c.getCrew() != null && c.getCrew().getName().equals(crew.getName()))
+                .toList();
+    }
+
+    @Override
+    public List<Character> findByBattleId(int battleId) {
+        logger.debug("Finding characters by battleId={}", battleId);
+        return factory.getAllBattles().stream()
+                .filter(b -> b.getId() == battleId)
+                .findFirst()
+                .map(b -> List.copyOf(b.getCharacters()))
+                .orElse(List.of());
+    }
+
+    @Override
     public int save(Character character) {
         logger.debug("Saving character {}", character);
         return factory.addCharacter(character).getId();
+    }
+
+    @Override
+    public void delete(int id) {
+        logger.debug("Deleting character id={}", id);
+        factory.removeCharacter(id);
     }
 }

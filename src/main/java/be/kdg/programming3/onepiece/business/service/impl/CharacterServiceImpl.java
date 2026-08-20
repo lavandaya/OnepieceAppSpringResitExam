@@ -41,6 +41,16 @@ public class CharacterServiceImpl implements CharacterService {
     }
 
     @Override
+    public List<Character> getCharactersByCrew(Crew crew) {
+        return repository.findByCrew(crew);
+    }
+
+    @Override
+    public List<Character> getCharactersInBattle(int battleId) {
+        return repository.findByBattleId(battleId);
+    }
+
+    @Override
     public List<Crew> getAllCrews() {
         return crewRepository.findAll();
     }
@@ -58,5 +68,11 @@ public class CharacterServiceImpl implements CharacterService {
 
         repository.save(character);
         logger.debug("Added character {} (crew='{}')", character, crewName);
+    }
+
+    @Override
+    public void deleteCharacter(int id) {
+        logger.debug("Deleting character id={}", id);
+        repository.delete(id);
     }
 }

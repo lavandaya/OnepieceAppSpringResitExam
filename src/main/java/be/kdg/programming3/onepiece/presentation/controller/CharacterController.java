@@ -2,6 +2,7 @@ package be.kdg.programming3.onepiece.presentation.controller;
 
 import be.kdg.programming3.onepiece.business.domain.Character;
 import be.kdg.programming3.onepiece.business.domain.Powertype;
+import be.kdg.programming3.onepiece.business.service.BattleService;
 import be.kdg.programming3.onepiece.business.service.CharacterService;
 import be.kdg.programming3.onepiece.presentation.viewmodel.CharacterViewModel;
 import jakarta.validation.Valid;
@@ -23,9 +24,11 @@ public class CharacterController {
     private static final Logger logger = LoggerFactory.getLogger(CharacterController.class);
 
     private final CharacterService characterService;
+    private final BattleService battleService;
 
-    public CharacterController(CharacterService characterService) {
+    public CharacterController(CharacterService characterService, BattleService battleService) {
         this.characterService = characterService;
+        this.battleService = battleService;
     }
 
     @GetMapping({"/", "/characters"})
@@ -70,8 +73,16 @@ public class CharacterController {
         return characterService.getCharacterById(id)
                 .map(character -> {
                     model.addAttribute("character", character);
+                    model.addAttribute("battles", battleService.getBattlesForCharacter(id));
                     return "characterDetail";
                 })
                 .orElse("redirect:/characters");
+    }
+
+    @PostMapping("/characters/{id}/delete")
+    public String deleteCharacter(@PathVariable int id) {
+        logger.debug("Deleting character id={}", id);
+        characterService.deleteCharacter(id);
+        return "redirect:/characters";
     }
 }

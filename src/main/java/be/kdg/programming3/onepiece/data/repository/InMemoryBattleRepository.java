@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Profile("memory")
@@ -28,6 +29,14 @@ public class InMemoryBattleRepository implements BattleRepository {
     }
 
     @Override
+    public Optional<Battle> findById(int id) {
+        logger.debug("Finding battle by id={}", id);
+        return factory.getAllBattles().stream()
+                .filter(b -> b.getId() == id)
+                .findFirst();
+    }
+
+    @Override
     public List<Battle> findByLocationAndDate(String location, LocalDate date) {
         logger.debug("Finding battles: location='{}', date={}", location, date);
         String needle = (location == null) ? null : location.toLowerCase();
@@ -35,6 +44,16 @@ public class InMemoryBattleRepository implements BattleRepository {
                 .filter(b -> needle == null || needle.isBlank() || b.getLocation().toLowerCase().contains(needle))
                 .filter(b -> date == null || b.getDate().toLocalDate().isEqual(date))
                 .toList();
+    }
+
+    @Override
+    public List<Battle> findByCharacterId(int characterId) {
+        logger.debug("Finding battles by characterId={}", characterId);
+        return factory.getAllCharacters().stream()
+                .filter(c -> c.getId() == characterId)
+                .findFirst()
+                .map(c -> List.copyOf(c.getBattles()))
+                .orElse(List.of());
     }
 
     @Override
@@ -55,5 +74,11 @@ public class InMemoryBattleRepository implements BattleRepository {
         if (battle != null && character != null) {
             battle.addCharacter(character);
         }
+    }
+
+    @Override
+    public void delete(int id) {
+        logger.debug("Deleting battle id={}", id);
+        factory.removeBattle(id);
     }
 }

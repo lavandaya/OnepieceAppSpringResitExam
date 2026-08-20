@@ -60,6 +60,26 @@ public class JdbcCharacterRepository implements CharacterRepository {
     }
 
     @Override
+    public List<Character> findByCrew(Crew crew) {
+        logger.debug("Finding characters by crew '{}'", crew.getName());
+        return jdbcClient.sql(SELECT_BASE + " WHERE c.crew_name = :crewName ORDER BY c.character_id")
+                .param("crewName", crew.getName())
+                .query(this::mapCharacter)
+                .list();
+    }
+
+    @Override
+    public List<Character> findByBattleId(int battleId) {
+        logger.debug("Finding characters in battle id={}", battleId);
+        return jdbcClient.sql(SELECT_BASE +
+                        " JOIN character_battles cb ON cb.character_id = c.character_id" +
+                        " WHERE cb.battle_id = :battleId ORDER BY c.character_id")
+                .param("battleId", battleId)
+                .query(this::mapCharacter)
+                .list();
+    }
+
+    @Override
     public int save(Character character) {
         logger.debug("Saving character {}", character);
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -75,6 +95,14 @@ public class JdbcCharacterRepository implements CharacterRepository {
                 .param("crewName", character.getCrew() != null ? character.getCrew().getName() : null)
                 .update(keyHolder);
         return keyHolder.getKey().intValue();
+    }
+
+    @Override
+    public void delete(int id) {
+        logger.debug("Deleting character id={}", id);
+        jdbcClient.sql("DELETE FROM characters WHERE character_id = :id")
+                .param("id", id)
+                .update();
     }
 
     private Character mapCharacter(ResultSet rs, int rowNum) throws SQLException {

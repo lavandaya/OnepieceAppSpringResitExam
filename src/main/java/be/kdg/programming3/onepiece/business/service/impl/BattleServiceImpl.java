@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BattleServiceImpl implements BattleService {
@@ -27,8 +28,18 @@ public class BattleServiceImpl implements BattleService {
     }
 
     @Override
+    public Optional<Battle> getBattleById(int id) {
+        return repository.findById(id);
+    }
+
+    @Override
     public List<Battle> findBattles(String location, LocalDate date) {
         return repository.findByLocationAndDate(location, date);
+    }
+
+    @Override
+    public List<Battle> getBattlesForCharacter(int characterId) {
+        return repository.findByCharacterId(characterId);
     }
 
     @Override
@@ -42,5 +53,11 @@ public class BattleServiceImpl implements BattleService {
 
         logger.debug("Added battle {} with {} character(s)", battle,
                 characterIds == null ? 0 : characterIds.size());
+    }
+
+    @Override
+    public void deleteBattle(int id) {
+        logger.debug("Deleting battle id={}", id);
+        repository.delete(id);
     }
 }

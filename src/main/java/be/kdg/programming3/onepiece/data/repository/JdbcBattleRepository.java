@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Profile("jdbc")
@@ -36,6 +37,15 @@ public class JdbcBattleRepository implements BattleRepository {
     }
 
     @Override
+    public Optional<Battle> findById(int id) {
+        logger.debug("Finding battle by id={}", id);
+        return jdbcClient.sql(SELECT_BASE + " WHERE battle_id = :id")
+                .param("id", id)
+                .query(this::mapBattle)
+                .optional();
+    }
+
+    @Override
     public List<Battle> findByLocationAndDate(String location, LocalDate date) {
         logger.debug("Finding battles: location='{}', date={}", location, date);
         String needle = (location == null || location.isBlank()) ? null : location.toLowerCase();
@@ -49,6 +59,21 @@ public class JdbcBattleRepository implements BattleRepository {
                         """)
                 .param("needle", needle)
                 .param("date", date)
+                .query(this::mapBattle)
+                .list();
+    }
+
+    @Override
+    public List<Battle> findByCharacterId(int characterId) {
+        logger.debug("Finding battles fought by character id={}", characterId);
+        return jdbcClient.sql("""
+                        SELECT b.battle_id, b.name, b.location, b.fought_at, b.winner
+                        FROM battles b
+                        JOIN character_battles cb ON cb.battle_id = b.battle_id
+                        WHERE cb.character_id = :characterId
+                        ORDER BY b.battle_id
+                        """)
+                .param("characterId", characterId)
                 .query(this::mapBattle)
                 .list();
     }
@@ -78,6 +103,14 @@ public class JdbcBattleRepository implements BattleRepository {
                         """)
                 .param("characterId", characterId)
                 .param("battleId", battleId)
+                .update();
+    }
+
+    @Override
+    public void delete(int id) {
+        logger.debug("Deleting battle id={}", id);
+        jdbcClient.sql("DELETE FROM battles WHERE battle_id = :id")
+                .param("id", id)
                 .update();
     }
 
