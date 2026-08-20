@@ -4,6 +4,7 @@ import be.kdg.programming3.onepiece.business.domain.Battle;
 import be.kdg.programming3.onepiece.business.domain.Character;
 import be.kdg.programming3.onepiece.business.domain.Crew;
 import be.kdg.programming3.onepiece.business.domain.Powertype;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import org.slf4j.Logger;
@@ -15,12 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Profile("memory")
 public class DataFactory {
     private static final Logger logger = LoggerFactory.getLogger(DataFactory.class);
 
     private final List<Character> characters = new ArrayList<>();
     private final List<Battle> battles = new ArrayList<>();
     private final List<Crew> crews = new ArrayList<>();
+    private int nextCharacterId;
+    private int nextBattleId;
 
     @PostConstruct
     public void seed() {
@@ -63,6 +67,9 @@ public class DataFactory {
 
         crews.add(crew1); crews.add(crew2);
 
+        nextCharacterId = characters.size() + 1;
+        nextBattleId = battles.size() + 1;
+
         logger.debug("Seeded {} characters, {} battles, {} crews",
                 characters.size(), battles.size(), crews.size());
     }
@@ -71,6 +78,18 @@ public class DataFactory {
     public List<Battle> getAllBattles() { return new ArrayList<>(battles); }
     public List<Crew> getAllCrews() { return new ArrayList<>(crews); }
 
-    public void addCharacter(Character character) { characters.add(character); }
-    public void addBattle(Battle battle) { battles.add(battle); }
+    public Character addCharacter(Character character) {
+        Character stored = new Character(nextCharacterId++, character.getName(), character.getAge(),
+                character.getAppearance(), character.getPowertype(), character.getPower());
+        stored.setCrew(character.getCrew());
+        characters.add(stored);
+        return stored;
+    }
+
+    public Battle addBattle(Battle battle) {
+        Battle stored = new Battle(nextBattleId++, battle.getName(), battle.getLocation(),
+                battle.getDate(), battle.getWinner());
+        battles.add(stored);
+        return stored;
+    }
 }

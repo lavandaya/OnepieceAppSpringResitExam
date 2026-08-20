@@ -10,5 +10,5 @@ public interface CharacterRepository {
     List<Character> findAll();
     Optional<Character> findById(int id);
     List<Character> findByPowertype(Powertype powertype);
-    void save(Character character);
+    int save(Character character);
 }

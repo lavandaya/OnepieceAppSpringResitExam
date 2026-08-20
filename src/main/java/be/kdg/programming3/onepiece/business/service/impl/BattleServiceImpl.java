@@ -34,10 +34,10 @@ public class BattleServiceImpl implements BattleService {
     @Override
     public void addBattle(String name, String location, LocalDateTime date, String winner, List<Integer> characterIds) {
         Battle battle = new Battle(name, location, date, winner);
-        repository.save(battle);
+        int battleId = repository.save(battle);
 
         if (characterIds != null) {
-            characterIds.forEach(charId -> repository.addCharacterToBattle(battle.getId(), charId));
+            characterIds.forEach(charId -> repository.addCharacterToBattle(battleId, charId));
         }
 
         logger.debug("Added battle {} with {} character(s)", battle,

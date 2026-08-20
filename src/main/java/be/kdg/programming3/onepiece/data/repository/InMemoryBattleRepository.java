@@ -5,12 +5,14 @@ import be.kdg.programming3.onepiece.business.domain.Character;
 import be.kdg.programming3.onepiece.data.DataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Repository
+@Profile("memory")
 public class InMemoryBattleRepository implements BattleRepository {
     private static final Logger logger = LoggerFactory.getLogger(InMemoryBattleRepository.class);
 
@@ -36,9 +38,9 @@ public class InMemoryBattleRepository implements BattleRepository {
     }
 
     @Override
-    public void save(Battle battle) {
+    public int save(Battle battle) {
         logger.debug("Saving battle {}", battle);
-        factory.addBattle(battle);
+        return factory.addBattle(battle).getId();
     }
 
     @Override
