@@ -1,9 +1,11 @@
 package be.kdg.programming3.onepiece.business.service.impl;
 
 import be.kdg.programming3.onepiece.business.domain.Character;
+import be.kdg.programming3.onepiece.business.domain.Crew;
 import be.kdg.programming3.onepiece.business.domain.Powertype;
 import be.kdg.programming3.onepiece.business.service.CharacterService;
 import be.kdg.programming3.onepiece.data.repository.CharacterRepository;
+import be.kdg.programming3.onepiece.data.repository.CrewRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,11 @@ public class CharacterServiceImpl implements CharacterService {
     private static final Logger logger = LoggerFactory.getLogger(CharacterServiceImpl.class);
 
     private final CharacterRepository repository;
+    private final CrewRepository crewRepository;
 
-    public CharacterServiceImpl(CharacterRepository repository) {
+    public CharacterServiceImpl(CharacterRepository repository, CrewRepository crewRepository) {
         this.repository = repository;
+        this.crewRepository = crewRepository;
     }
 
     @Override
@@ -37,9 +41,22 @@ public class CharacterServiceImpl implements CharacterService {
     }
 
     @Override
-    public void addCharacter(String name, int age, String appearance, Powertype powertype, double power) {
+    public List<Crew> getAllCrews() {
+        return crewRepository.findAll();
+    }
+
+    @Override
+    public Optional<Crew> getCrewByName(String name) {
+        return crewRepository.findByName(name);
+    }
+
+    @Override
+    public void addCharacter(String name, int age, String appearance,
+                              Powertype powertype, double power, String crewName) {
         Character character = new Character(name, age, appearance, powertype, power);
+        crewRepository.findByName(crewName).ifPresent(character::setCrew);
+
         repository.save(character);
-        logger.debug("Added character {}", character);
+        logger.debug("Added character {} (crew='{}')", character, crewName);
     }
 }

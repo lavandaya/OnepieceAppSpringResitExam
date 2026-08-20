@@ -3,11 +3,15 @@ package be.kdg.programming3.onepiece.presentation.controller;
 import be.kdg.programming3.onepiece.business.domain.Character;
 import be.kdg.programming3.onepiece.business.domain.Powertype;
 import be.kdg.programming3.onepiece.business.service.CharacterService;
+import be.kdg.programming3.onepiece.presentation.viewmodel.CharacterViewModel;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,16 +43,24 @@ public class CharacterController {
 
     @GetMapping("/characters/add")
     public String showAddCharacterForm(Model model) {
+        model.addAttribute("characterViewModel", new CharacterViewModel());
+        model.addAttribute("crews", characterService.getAllCrews());
         model.addAttribute("powertypes", Powertype.values());
         return "addCharacter";
     }
 
     @PostMapping("/characters/add")
-    public String addCharacter(@RequestParam String name, @RequestParam int age,
-                                @RequestParam String appearance, @RequestParam Powertype powertype,
-                                @RequestParam double power) {
-        logger.debug("Adding character '{}' via web form", name);
-        characterService.addCharacter(name, age, appearance, powertype, power);
+    public String addCharacter(@Valid @ModelAttribute("characterViewModel") CharacterViewModel viewModel,
+                                BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            logger.debug("Add character form has {} error(s)", bindingResult.getErrorCount());
+            model.addAttribute("crews", characterService.getAllCrews());
+            model.addAttribute("powertypes", Powertype.values());
+            return "addCharacter";
+        }
+        characterService.addCharacter(viewModel.getName(), viewModel.getAge(),
+                viewModel.getAppearance(), viewModel.getPowertype(),
+                viewModel.getPower(), viewModel.getCrew().getName());
         return "redirect:/characters";
     }
 

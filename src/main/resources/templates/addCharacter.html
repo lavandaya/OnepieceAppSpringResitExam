@@ -8,34 +8,65 @@
 <main class="container my-4">
     <h1 class="mb-4" th:text="#{addCharacter.heading}">Add Character</h1>
 
-    <form class="needs-validation row g-3" novalidate th:action="@{/characters/add}" method="post">
+    <form class="needs-validation row g-3" novalidate th:action="@{/characters/add}" method="post"
+          th:object="${characterViewModel}">
         <div class="col-md-6">
             <label for="name" class="form-label" th:text="#{addCharacter.label.name}">Name:</label>
-            <input type="text" class="form-control" id="name" name="name" required>
-            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+            <input type="text" class="form-control" th:field="*{name}" th:errorclass="is-invalid" required>
+            <div class="invalid-feedback">
+                <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                <span th:unless="${#fields.hasErrors('name')}" th:text="#{validation.required}">Required</span>
+            </div>
         </div>
         <div class="col-md-6">
             <label for="age" class="form-label" th:text="#{addCharacter.label.age}">Age:</label>
-            <input type="number" class="form-control" id="age" name="age" min="0" required>
-            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+            <input type="number" class="form-control" min="0" th:field="*{age}" th:errorclass="is-invalid" required>
+            <div class="invalid-feedback">
+                <span th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></span>
+                <span th:unless="${#fields.hasErrors('age')}" th:text="#{validation.required}">Required</span>
+            </div>
         </div>
         <div class="col-12">
             <label for="appearance" class="form-label" th:text="#{addCharacter.label.appearance}">Appearance:</label>
-            <input type="url" class="form-control" id="appearance" name="appearance"
-                   placeholder="https://..." required>
-            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+            <input type="url" class="form-control" placeholder="https://..."
+                   th:field="*{appearance}" th:errorclass="is-invalid" required>
+            <div class="invalid-feedback">
+                <span th:if="${#fields.hasErrors('appearance')}" th:errors="*{appearance}"></span>
+                <span th:unless="${#fields.hasErrors('appearance')}" th:text="#{validation.required}">Required</span>
+            </div>
         </div>
         <div class="col-md-4">
             <label for="powertype" class="form-label" th:text="#{addCharacter.label.powertype}">Powertype:</label>
-            <select class="form-select" id="powertype" name="powertype" required>
+            <select class="form-select" th:field="*{powertype}" th:errorclass="is-invalid" required>
+                <option value="" th:text="#{addCharacter.choose}">-- choose --</option>
                 <option th:each="pt : ${powertypes}" th:value="${pt}" th:text="${pt}"></option>
             </select>
-            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+            <div class="invalid-feedback">
+                <span th:if="${#fields.hasErrors('powertype')}" th:errors="*{powertype}"></span>
+                <span th:unless="${#fields.hasErrors('powertype')}" th:text="#{validation.required}">Required</span>
+            </div>
         </div>
         <div class="col-md-4">
             <label for="power" class="form-label" th:text="#{addCharacter.label.power}">Power (DON):</label>
-            <input type="number" class="form-control" id="power" name="power" step="0.1" min="0" required>
-            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+            <input type="number" class="form-control" step="0.1" min="0"
+                   th:field="*{power}" th:errorclass="is-invalid" required>
+            <div class="invalid-feedback">
+                <span th:if="${#fields.hasErrors('power')}" th:errors="*{power}"></span>
+                <span th:unless="${#fields.hasErrors('power')}" th:text="#{validation.required}">Required</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label for="crew" class="form-label" th:text="#{addCharacter.label.crew}">Crew:</label>
+            <select id="crew" name="crew" class="form-select"
+                    th:classappend="${#fields.hasErrors('crew')} ? 'is-invalid'" required>
+                <option value="" th:text="#{addCharacter.choose}">-- choose --</option>
+                <option th:each="c : ${crews}" th:value="${c.name}" th:text="${c.name}"
+                        th:selected="${characterViewModel.crew != null and characterViewModel.crew.name == c.name}"></option>
+            </select>
+            <div class="invalid-feedback">
+                <span th:if="${#fields.hasErrors('crew')}" th:errors="*{crew}"></span>
+                <span th:unless="${#fields.hasErrors('crew')}" th:text="#{validation.required}">Required</span>
+            </div>
         </div>
         <div class="col-12">
             <button type="submit" class="btn btn-primary">

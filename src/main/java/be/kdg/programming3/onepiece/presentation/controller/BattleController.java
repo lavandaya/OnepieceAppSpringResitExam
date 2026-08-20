@@ -2,17 +2,20 @@ package be.kdg.programming3.onepiece.presentation.controller;
 
 import be.kdg.programming3.onepiece.business.service.BattleService;
 import be.kdg.programming3.onepiece.business.service.CharacterService;
+import be.kdg.programming3.onepiece.presentation.viewmodel.BattleViewModel;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -41,18 +44,21 @@ public class BattleController {
 
     @GetMapping("/battles/add")
     public String showAddBattleForm(Model model) {
+        model.addAttribute("battleViewModel", new BattleViewModel());
         model.addAttribute("allCharacters", characterService.getAllCharacters());
         return "addBattle";
     }
 
     @PostMapping("/battles/add")
-    public String addBattle(@RequestParam String name, @RequestParam String location,
-                             @RequestParam
-                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date,
-                             @RequestParam String winner,
-                             @RequestParam(required = false) List<Integer> characterIds) {
-        logger.debug("Adding battle '{}' via web form", name);
-        battleService.addBattle(name, location, date, winner, characterIds);
+    public String addBattle(@Valid @ModelAttribute("battleViewModel") BattleViewModel viewModel,
+                             BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            logger.debug("Add battle form has {} error(s)", bindingResult.getErrorCount());
+            model.addAttribute("allCharacters", characterService.getAllCharacters());
+            return "addBattle";
+        }
+        battleService.addBattle(viewModel.getName(), viewModel.getLocation(),
+                viewModel.getDate(), viewModel.getWinner(), viewModel.getCharacterIds());
         return "redirect:/battles";
     }
 }
