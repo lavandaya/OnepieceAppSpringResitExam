@@ -2,38 +2,34 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Add Battle</title>
+    <title th:text="#{addBattle.title}">Add Battle</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<nav>
-    <a href="/characters">Character List</a> |
-    <a href="/battles">Battle List</a> |
-    <a href="/characters/add">Add Character</a> |
-    <a href="/battles/add">Add Battle</a>
-</nav>
+<nav th:replace="~{fragments/navigation :: navbar}"></nav>
 
-<h1>Add Battle</h1>
+<h1 th:text="#{addBattle.heading}">Add Battle</h1>
 
 <form th:action="@{/battles/add}" method="post">
-    <label for="name">Name:</label>
+    <label for="name" th:text="#{addBattle.label.name}">Name:</label>
     <input type="text" id="name" name="name" required><br>
 
-    <label for="location">Location:</label>
+    <label for="location" th:text="#{addBattle.label.location}">Location:</label>
     <input type="text" id="location" name="location" required><br>
 
-    <label for="date">Date and time:</label>
+    <label for="date" th:text="#{addBattle.label.date}">Date and time:</label>
     <input type="datetime-local" id="date" name="date" required><br>
 
-    <label for="winner">Winner:</label>
+    <label for="winner" th:text="#{addBattle.label.winner}">Winner:</label>
     <input type="text" id="winner" name="winner" required><br>
 
-    <p>Characters:</p>
+    <p th:text="#{addBattle.label.characters}">Characters:</p>
     <div th:each="character : ${allCharacters}">
         <input type="checkbox" th:id="${'char-' + character.id}" name="characterIds" th:value="${character.id}">
         <label th:for="${'char-' + character.id}" th:text="${character.name}"></label>
     </div>
 
-    <button type="submit">Add</button>
+    <button type="submit" th:text="#{button.add}">Add</button>
 </form>
 </body>
 </html>

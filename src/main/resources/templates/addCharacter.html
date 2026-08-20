@@ -2,37 +2,33 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Add Character</title>
+    <title th:text="#{addCharacter.title}">Add Character</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<nav>
-    <a href="/characters">Character List</a> |
-    <a href="/battles">Battle List</a> |
-    <a href="/characters/add">Add Character</a> |
-    <a href="/battles/add">Add Battle</a>
-</nav>
+<nav th:replace="~{fragments/navigation :: navbar}"></nav>
 
-<h1>Add Character</h1>
+<h1 th:text="#{addCharacter.heading}">Add Character</h1>
 
 <form th:action="@{/characters/add}" method="post">
-    <label for="name">Name:</label>
+    <label for="name" th:text="#{addCharacter.label.name}">Name:</label>
     <input type="text" id="name" name="name" required><br>
 
-    <label for="age">Age:</label>
+    <label for="age" th:text="#{addCharacter.label.age}">Age:</label>
     <input type="number" id="age" name="age" min="0" required><br>
 
-    <label for="appearance">Appearance (image URL):</label>
+    <label for="appearance" th:text="#{addCharacter.label.appearance}">Appearance (image URL):</label>
     <input type="url" id="appearance" name="appearance" required><br>
 
-    <label for="powertype">Powertype:</label>
+    <label for="powertype" th:text="#{addCharacter.label.powertype}">Powertype:</label>
     <select id="powertype" name="powertype" required>
         <option th:each="pt : ${powertypes}" th:value="${pt}" th:text="${pt}"></option>
     </select><br>
 
-    <label for="power">Power (DON):</label>
+    <label for="power" th:text="#{addCharacter.label.power}">Power (DON):</label>
     <input type="number" id="power" name="power" step="0.1" min="0" required><br>
 
-    <button type="submit">Add</button>
+    <button type="submit" th:text="#{button.add}">Add</button>
 </form>
 </body>
 </html>

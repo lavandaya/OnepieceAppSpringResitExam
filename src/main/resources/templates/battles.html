@@ -2,37 +2,33 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Battles</title>
+    <title th:text="#{battles.title}">Battles</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<nav>
-    <a href="/characters">Character List</a> |
-    <a href="/battles">Battle List</a> |
-    <a href="/characters/add">Add Character</a> |
-    <a href="/battles/add">Add Battle</a>
-</nav>
+<nav th:replace="~{fragments/navigation :: navbar}"></nav>
 
-<h1>Battles</h1>
+<h1 th:text="#{battles.heading}">Battles</h1>
 
 <form th:action="@{/battles}" method="get">
-    <label for="location">Location contains:</label>
+    <label for="location" th:text="#{battles.filter.location}">Location contains:</label>
     <input type="text" id="location" name="location" th:value="${location}">
 
-    <label for="date">Date:</label>
+    <label for="date" th:text="#{battles.filter.date}">Date:</label>
     <input type="date" id="date" name="date" th:value="${date}">
 
-    <button type="submit">Filter</button>
-    <a href="/battles">Reset</a>
+    <button type="submit" th:text="#{button.filter}">Filter</button>
+    <a th:href="@{/battles}" th:text="#{button.reset}">Reset</a>
 </form>
 
-<table border="1">
+<table>
     <thead>
     <tr>
-        <th>Id</th>
-        <th>Name</th>
-        <th>Location</th>
-        <th>Date</th>
-        <th>Winner</th>
+        <th th:text="#{battles.table.id}">Id</th>
+        <th th:text="#{battles.table.name}">Name</th>
+        <th th:text="#{battles.table.location}">Location</th>
+        <th th:text="#{battles.table.date}">Date</th>
+        <th th:text="#{battles.table.winner}">Winner</th>
     </tr>
     </thead>
     <tbody>
@@ -45,5 +41,7 @@
     </tr>
     </tbody>
 </table>
+
+<p th:text="#{battles.count(${#lists.size(battles)})}">Number of battles: 0</p>
 </body>
 </html>
