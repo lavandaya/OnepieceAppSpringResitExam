@@ -1,34 +1,52 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{addCharacter.title}">Add Character</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
-<body>
-<nav th:replace="~{fragments/navigation :: navbar}"></nav>
+<head th:replace="~{fragments/layout :: head(#{addCharacter.title})}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
 
-<h1 th:text="#{addCharacter.heading}">Add Character</h1>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<form th:action="@{/characters/add}" method="post">
-    <label for="name" th:text="#{addCharacter.label.name}">Name:</label>
-    <input type="text" id="name" name="name" required><br>
+<main class="container my-4">
+    <h1 class="mb-4" th:text="#{addCharacter.heading}">Add Character</h1>
 
-    <label for="age" th:text="#{addCharacter.label.age}">Age:</label>
-    <input type="number" id="age" name="age" min="0" required><br>
+    <form class="needs-validation row g-3" novalidate th:action="@{/characters/add}" method="post">
+        <div class="col-md-6">
+            <label for="name" class="form-label" th:text="#{addCharacter.label.name}">Name:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+        </div>
+        <div class="col-md-6">
+            <label for="age" class="form-label" th:text="#{addCharacter.label.age}">Age:</label>
+            <input type="number" class="form-control" id="age" name="age" min="0" required>
+            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+        </div>
+        <div class="col-12">
+            <label for="appearance" class="form-label" th:text="#{addCharacter.label.appearance}">Appearance:</label>
+            <input type="url" class="form-control" id="appearance" name="appearance"
+                   placeholder="https://..." required>
+            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+        </div>
+        <div class="col-md-4">
+            <label for="powertype" class="form-label" th:text="#{addCharacter.label.powertype}">Powertype:</label>
+            <select class="form-select" id="powertype" name="powertype" required>
+                <option th:each="pt : ${powertypes}" th:value="${pt}" th:text="${pt}"></option>
+            </select>
+            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+        </div>
+        <div class="col-md-4">
+            <label for="power" class="form-label" th:text="#{addCharacter.label.power}">Power (DON):</label>
+            <input type="number" class="form-control" id="power" name="power" step="0.1" min="0" required>
+            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> <span th:text="#{button.add}">Add</span>
+            </button>
+        </div>
+    </form>
+</main>
 
-    <label for="appearance" th:text="#{addCharacter.label.appearance}">Appearance (image URL):</label>
-    <input type="url" id="appearance" name="appearance" required><br>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 
-    <label for="powertype" th:text="#{addCharacter.label.powertype}">Powertype:</label>
-    <select id="powertype" name="powertype" required>
-        <option th:each="pt : ${powertypes}" th:value="${pt}" th:text="${pt}"></option>
-    </select><br>
-
-    <label for="power" th:text="#{addCharacter.label.power}">Power (DON):</label>
-    <input type="number" id="power" name="power" step="0.1" min="0" required><br>
-
-    <button type="submit" th:text="#{button.add}">Add</button>
-</form>
 </body>
 </html>

@@ -1,47 +1,59 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{battles.title}">Battles</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
-<body>
-<nav th:replace="~{fragments/navigation :: navbar}"></nav>
+<head th:replace="~{fragments/layout :: head(#{battles.title})}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
 
-<h1 th:text="#{battles.heading}">Battles</h1>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<form th:action="@{/battles}" method="get">
-    <label for="location" th:text="#{battles.filter.location}">Location contains:</label>
-    <input type="text" id="location" name="location" th:value="${location}">
+<main class="container my-4">
+    <h1 class="mb-4" th:text="#{battles.heading}">Battles</h1>
 
-    <label for="date" th:text="#{battles.filter.date}">Date:</label>
-    <input type="date" id="date" name="date" th:value="${date}">
+    <form class="row g-2 align-items-end mb-4" th:action="@{/battles}" method="get">
+        <div class="col-12 col-sm-auto">
+            <label for="location" class="form-label" th:text="#{battles.filter.location}">Location contains:</label>
+            <input type="text" id="location" name="location" class="form-control" th:value="${location}">
+        </div>
+        <div class="col-12 col-sm-auto">
+            <label for="date" class="form-label" th:text="#{battles.filter.date}">Date:</label>
+            <input type="date" id="date" name="date" class="form-control" th:value="${date}">
+        </div>
+        <div class="col-12 col-sm-auto">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-funnel"></i> <span th:text="#{button.filter}">Filter</span>
+            </button>
+            <a class="btn btn-outline-secondary" th:href="@{/battles}" th:text="#{button.reset}">Reset</a>
+        </div>
+    </form>
 
-    <button type="submit" th:text="#{button.filter}">Filter</button>
-    <a th:href="@{/battles}" th:text="#{button.reset}">Reset</a>
-</form>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th th:text="#{battles.table.id}">Id</th>
+                <th th:text="#{battles.table.name}">Name</th>
+                <th th:text="#{battles.table.location}">Location</th>
+                <th th:text="#{battles.table.date}">Date</th>
+                <th th:text="#{battles.table.winner}">Winner</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="battle : ${battles}"
+                th:classappend="${battle.winner == 'Luffy'} ? 'table-warning' : ''">
+                <td th:text="${battle.id}"></td>
+                <td th:text="${battle.name}"></td>
+                <td th:text="${battle.location}"></td>
+                <td th:text="${#temporals.format(battle.date, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${battle.winner}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
-<table>
-    <thead>
-    <tr>
-        <th th:text="#{battles.table.id}">Id</th>
-        <th th:text="#{battles.table.name}">Name</th>
-        <th th:text="#{battles.table.location}">Location</th>
-        <th th:text="#{battles.table.date}">Date</th>
-        <th th:text="#{battles.table.winner}">Winner</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="battle : ${battles}">
-        <td th:text="${battle.id}"></td>
-        <td th:text="${battle.name}"></td>
-        <td th:text="${battle.location}"></td>
-        <td th:text="${#temporals.format(battle.date, 'yyyy-MM-dd HH:mm')}"></td>
-        <td th:text="${battle.winner}"></td>
-    </tr>
-    </tbody>
-</table>
+    <p class="text-muted fst-italic" th:text="#{battles.count(${#lists.size(battles)})}">Number of battles: 0</p>
+</main>
 
-<p th:text="#{battles.count(${#lists.size(battles)})}">Number of battles: 0</p>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
 </body>
 </html>

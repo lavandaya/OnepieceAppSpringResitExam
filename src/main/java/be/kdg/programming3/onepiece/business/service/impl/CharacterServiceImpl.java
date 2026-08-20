@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CharacterServiceImpl implements CharacterService {
@@ -23,6 +24,11 @@ public class CharacterServiceImpl implements CharacterService {
     @Override
     public List<Character> getAllCharacters() {
         return repository.findAll();
+    }
+
+    @Override
+    public Optional<Character> getCharacterById(int id) {
+        return repository.findById(id);
     }
 
     @Override

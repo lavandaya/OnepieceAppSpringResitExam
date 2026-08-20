@@ -1,35 +1,60 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{addBattle.title}">Add Battle</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
-<body>
-<nav th:replace="~{fragments/navigation :: navbar}"></nav>
+<head th:replace="~{fragments/layout :: head(#{addBattle.title})}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
 
-<h1 th:text="#{addBattle.heading}">Add Battle</h1>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<form th:action="@{/battles/add}" method="post">
-    <label for="name" th:text="#{addBattle.label.name}">Name:</label>
-    <input type="text" id="name" name="name" required><br>
+<main class="container my-4">
+    <h1 class="mb-4" th:text="#{addBattle.heading}">Add Battle</h1>
 
-    <label for="location" th:text="#{addBattle.label.location}">Location:</label>
-    <input type="text" id="location" name="location" required><br>
+    <form class="needs-validation row g-3" novalidate th:action="@{/battles/add}" method="post">
+        <div class="col-md-6">
+            <label for="name" class="form-label" th:text="#{addBattle.label.name}">Name:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+        </div>
+        <div class="col-md-6">
+            <label for="location" class="form-label" th:text="#{addBattle.label.location}">Location:</label>
+            <input type="text" class="form-control" id="location" name="location" required>
+            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+        </div>
+        <div class="col-md-6">
+            <label for="date" class="form-label" th:text="#{addBattle.label.date}">Date and time:</label>
+            <input type="datetime-local" class="form-control" id="date" name="date" required>
+            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+        </div>
+        <div class="col-md-6">
+            <label for="winner" class="form-label" th:text="#{addBattle.label.winner}">Winner:</label>
+            <input type="text" class="form-control" id="winner" name="winner" required>
+            <div class="invalid-feedback" th:text="#{validation.required}">Required</div>
+        </div>
 
-    <label for="date" th:text="#{addBattle.label.date}">Date and time:</label>
-    <input type="datetime-local" id="date" name="date" required><br>
+        <div class="col-12">
+            <label class="form-label" th:text="#{addBattle.label.characters}">Characters:</label>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2">
+                <div class="col" th:each="character : ${allCharacters}">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                               name="characterIds" th:value="${character.id}"
+                               th:id="${'char-' + character.id}">
+                        <label class="form-check-label" th:for="${'char-' + character.id}"
+                               th:text="${character.name}">name</label>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <label for="winner" th:text="#{addBattle.label.winner}">Winner:</label>
-    <input type="text" id="winner" name="winner" required><br>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> <span th:text="#{button.add}">Add</span>
+            </button>
+        </div>
+    </form>
+</main>
 
-    <p th:text="#{addBattle.label.characters}">Characters:</p>
-    <div th:each="character : ${allCharacters}">
-        <input type="checkbox" th:id="${'char-' + character.id}" name="characterIds" th:value="${character.id}">
-        <label th:for="${'char-' + character.id}" th:text="${character.name}"></label>
-    </div>
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
 
-    <button type="submit" th:text="#{button.add}">Add</button>
-</form>
 </body>
 </html>

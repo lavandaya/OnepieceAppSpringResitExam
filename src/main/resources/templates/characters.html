@@ -1,47 +1,62 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{characters.title}">Characters</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-</head>
-<body>
-<nav th:replace="~{fragments/navigation :: navbar}"></nav>
+<head th:replace="~{fragments/layout :: head(#{characters.title})}"></head>
+<body class="d-flex flex-column min-vh-100 bg-light">
 
-<h1 th:text="#{characters.heading}">Characters</h1>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<form th:action="@{/characters}" method="get">
-    <label for="powertype" th:text="#{characters.filter.powertype}">Powertype:</label>
-    <select id="powertype" name="powertype">
-        <option th:each="pt : ${powertypes}" th:value="${pt}" th:text="${pt}"
-                th:selected="${pt == selectedPowertype}"></option>
-    </select>
-    <button type="submit" th:text="#{button.filter}">Filter</button>
-</form>
+<main class="container my-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <h1 class="mb-0" th:text="#{characters.heading}">Characters</h1>
+        <span class="d-none d-lg-inline-block badge text-bg-secondary fs-6"
+              th:text="#{characters.count(${#lists.size(characters)})}">Number of characters: 0</span>
+    </div>
 
-<table>
-    <thead>
-    <tr>
-        <th th:text="#{characters.table.id}">Id</th>
-        <th th:text="#{characters.table.name}">Name</th>
-        <th th:text="#{characters.table.age}">Age</th>
-        <th th:text="#{characters.table.appearance}">Appearance</th>
-        <th th:text="#{characters.table.powertype}">Powertype</th>
-        <th th:text="#{characters.table.power}">Power</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="character : ${characters}">
-        <td th:text="${character.id}"></td>
-        <td th:text="${character.name}"></td>
-        <td th:text="${character.age}"></td>
-        <td th:text="${character.appearance}"></td>
-        <td th:text="${character.powertype}"></td>
-        <td th:text="${character.power}"></td>
-    </tr>
-    </tbody>
-</table>
+    <form class="row g-2 align-items-end mb-4" th:action="@{/characters}" method="get">
+        <div class="col-12 col-sm-auto">
+            <label for="powertype" class="form-label" th:text="#{characters.filter.powertype}">Powertype:</label>
+            <select id="powertype" name="powertype" class="form-select">
+                <option th:each="pt : ${powertypes}" th:value="${pt}" th:text="${pt}"
+                        th:selected="${pt == selectedPowertype}"></option>
+            </select>
+        </div>
+        <div class="col-12 col-sm-auto">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-funnel"></i> <span th:text="#{button.filter}">Filter</span>
+            </button>
+            <a class="btn btn-outline-secondary" th:href="@{/characters}" th:text="#{button.reset}">Reset</a>
+        </div>
+    </form>
 
-<p th:text="#{characters.count(${#lists.size(characters)})}">Number of characters: 0</p>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4">
+        <div class="col" th:each="character : ${characters}">
+            <div class="card h-100 shadow-sm"
+                 th:classappend="${character.power >= 9.0} ? 'border-warning border-2' : ''">
+                <img class="card-img-top character-img" th:src="${character.appearance}"
+                     th:alt="${character.name}">
+                <div class="card-body">
+                    <h5 class="card-title d-flex justify-content-between align-items-center">
+                        <span th:text="${character.name}">Name</span>
+                        <i class="bi bi-star-fill text-warning" th:if="${character.power >= 9.0}"></i>
+                    </h5>
+                    <p class="card-text">
+                        <span class="badge text-bg-primary" th:text="${character.power} + ' DON'">0 DON</span>
+                        <span class="badge text-bg-info" th:text="${character.powertype}">TYPE</span>
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <a class="btn btn-sm btn-outline-primary w-100"
+                       th:href="@{/characters/{id}(id=${character.id})}">
+                        <i class="bi bi-eye"></i> <span th:text="#{characters.details}">View details</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
 </body>
 </html>

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class InMemoryCharacterRepository implements CharacterRepository {
@@ -22,6 +23,14 @@ public class InMemoryCharacterRepository implements CharacterRepository {
     @Override
     public List<Character> findAll() {
         return factory.getAllCharacters();
+    }
+
+    @Override
+    public Optional<Character> findById(int id) {
+        logger.debug("Finding character by id={}", id);
+        return factory.getAllCharacters().stream()
+                .filter(c -> c.getId() == id)
+                .findFirst();
     }
 
     @Override
