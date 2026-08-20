@@ -3,6 +3,7 @@ package be.kdg.programming3.onepiece.business.service.impl;
 import be.kdg.programming3.onepiece.business.domain.Character;
 import be.kdg.programming3.onepiece.business.domain.Crew;
 import be.kdg.programming3.onepiece.business.domain.Powertype;
+import be.kdg.programming3.onepiece.business.exception.CharacterNotFoundException;
 import be.kdg.programming3.onepiece.business.service.CharacterService;
 import be.kdg.programming3.onepiece.data.repository.CharacterRepository;
 import be.kdg.programming3.onepiece.data.repository.CrewRepository;
@@ -73,12 +74,20 @@ public class CharacterServiceImpl implements CharacterService {
     @Override
     public void deleteCharacter(int id) {
         logger.debug("Deleting character id={}", id);
+        if (repository.findById(id).isEmpty()) {
+            logger.warn("Attempted to delete non-existent character id={}", id);
+            throw new CharacterNotFoundException(id);
+        }
         repository.delete(id);
     }
 
     @Override
     public void updateSwordName(int id, String swordName) {
         logger.debug("Updating sword name for character id={}", id);
+        if (repository.findById(id).isEmpty()) {
+            logger.warn("Attempted to update sword name for non-existent character id={}", id);
+            throw new CharacterNotFoundException(id);
+        }
         repository.updateSwordName(id, swordName);
     }
 

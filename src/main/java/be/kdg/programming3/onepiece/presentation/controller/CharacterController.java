@@ -2,6 +2,7 @@ package be.kdg.programming3.onepiece.presentation.controller;
 
 import be.kdg.programming3.onepiece.business.domain.Character;
 import be.kdg.programming3.onepiece.business.domain.Powertype;
+import be.kdg.programming3.onepiece.business.exception.CharacterNotFoundException;
 import be.kdg.programming3.onepiece.business.service.BattleService;
 import be.kdg.programming3.onepiece.business.service.CharacterService;
 import be.kdg.programming3.onepiece.presentation.viewmodel.CharacterViewModel;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -117,5 +119,12 @@ public class CharacterController {
         model.addAttribute("searchMinPower", minPower);
         model.addAttribute("searchMinBattles", minBattles);
         return "characterSearch";
+    }
+
+    @ExceptionHandler(CharacterNotFoundException.class)
+    public String handleCharacterNotFound(CharacterNotFoundException ex, Model model) {
+        logger.warn("Character not found (id={}): {}", ex.getCharacterId(), ex.getMessage());
+        model.addAttribute("errorMessage", ex.getMessage());
+        return "error/general";
     }
 }
